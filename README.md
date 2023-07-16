@@ -2,3 +2,236 @@
 ![GitHub go.mod Go version (subdirectory of monorepo)](https://img.shields.io/github/go-mod/go-version/zardan4/petition-rest)
 [![Go Report Card](https://goreportcard.com/badge/github.com/zardan4/petition-rest)](https://goreportcard.com/report/github.com/zardan4/petition-rest)
 ![GitHub Repo stars](https://img.shields.io/github/stars/zardan4/petition-rest)
+
+# REST for petitions
+Handles requests for petitions, users and signatures. Can be used for writing small petitions interfaces
+## Enpoints. Requests/Responses
+<details>
+<summary>
+<h3>Auth</h3>
+</summary>
+
+#### POST /signup. Create new user
+```go
+CreateUser(user petitions.User) (int, error)
+```
+Request body
+```json
+{
+    "name": "mark zuckerberg",
+    "grade": "3",
+    "password": "secretpassword123"
+}
+```
+Response
+```json
+{
+    "id": newUserId
+}
+```
+
+<br>
+
+#### POST /signin. Sign in as old user
+```go
+GetUserByName(name, password string) (petitions.User, error)
+```
+Request body
+```json
+{
+    "name": "mark zuckerberg",
+    "password": "secretpassword123"
+}
+```
+Response
+```json
+{
+    "token": usersJWT
+}
+```
+</details>
+
+<!-- petitions -->
+<details>
+<summary>
+<h3>Petitions. Only auth</h3>
+</summary>
+
+#### GET /petitions. Get all petitions
+```go
+GetAllPetitions() ([]petitions.Petition, error)
+```
+Response
+```json
+{
+    "data": [
+        {
+            "id": "id",
+            "title": "title",
+            "date": "date",
+            "timeend": "timeend",
+            "text": "text",
+            "answer": "answer"
+        }
+    ]
+}
+```
+
+<br>
+
+#### POST /petitions. Create petition
+```go
+CreatePetition(title, text string, authorId int) (int, error)
+```
+Request body
+```json
+{
+    "title": "title_example",
+    "text": "text_example"
+}
+```
+Response
+```json
+{
+    "id": "id"
+}
+```
+
+<br>
+
+#### GET /petitions/{id}. Get petition by id
+```go
+GetPetition(petitionId int) (petitions.Petition, error)
+```
+Response
+```json
+{
+    "id": "id",
+    "title": "title",
+    "date": "date",
+    "timeend": "timeend",
+    "text": "text",
+    "answer": "answer"
+}
+```
+
+<br>
+
+#### PUT /petitions/{id}. Update petition by id
+```go
+UpdatePetition(petition petitions.UpdatePetitionInput, petitionId, userId int) error
+```
+Request body. Optional fields but at least one
+```json
+{
+    "id": "id",
+    "title": "title",
+    "date": "date",
+    "timeend": "timeend",
+    "text": "text",
+    "answer": "answer"
+}
+```
+Response
+```json
+{
+    "status": "ok"
+}
+```
+
+<br>
+
+#### DELETE /petitions/{id}. Delete petition by id
+```go
+DeletePetition(petitionId, userId int) error
+```
+Response
+```json
+{
+    "status": "ok"
+}
+```
+
+<br>
+
+#### GET /petitions/{id}/signed. Get petition signed status by user
+```go
+CheckSignatorie(petitionId, userId int) (bool, error)
+```
+Response
+```json
+{
+    "signed": bool
+}
+```
+</details>
+
+<!-- signatures -->
+<details>
+<summary>
+<h3>Signatures. Only auth</h3>
+</summary>
+
+#### GET /petitions/{id}/subs. Get all signatures for petition
+```go
+GetAllSubs(petitionId int) ([]petitions.Sub, error)
+```
+Response
+```json
+{
+    "data": [
+        {
+            "id": "id",
+            "date": "date",
+            "userId": "userId",
+            "name": "username"
+        }
+    ]
+}
+```
+
+<br>
+
+#### POST /petitions/{id}/subs. Create signature for petition
+```go
+CreateSub(petitionId, userId int) (int, error)
+```
+Request body
+```json
+{}
+```
+Response
+```json
+{
+    "id": "signatureId"
+}
+```
+
+<br>
+
+#### DELETE /petitions/{id}/subs/{sign_id}. Delete specified signature for petition
+```go
+DeleteSub(subId, petitionId, userId int) error
+```
+Response
+```json
+{
+    "status": "ok"
+}
+```
+</details>
+
+## Running:
+- docker pull postgres 
+- docker run --name=petitions-resr -e POSTGRES_PASSWORD='qwerty123' -p 5433:5432 -d postgres
+- migrate -path ./schema -database 'postgres://postgres:qwerty123@localhost:5433/postgres?sslmode=disable' up
+- Configure .env & /configs files
+- go run cmd/main.go
+
+### .env example:
+```env
+POSTGRES_PASSWORD='<YOUR_PASSWORD>'
+```
+## TODO
+- docker-compose
+- unit tests
