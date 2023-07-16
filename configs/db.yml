@@ -1,0 +1,9 @@
+port: "8080"
+
+db: 
+  host: "127.0.0.1"
+  port: "5438"
+
+  username: "user_zardan"
+  dbname: "petitions"
+  sslmode: "disable"
