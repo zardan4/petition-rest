@@ -1,3 +1,4 @@
+
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/zardan4/petition-rest/linter.yml)
 ![GitHub go.mod Go version (subdirectory of monorepo)](https://img.shields.io/github/go-mod/go-version/zardan4/petition-rest)
 [![Go Report Card](https://goreportcard.com/badge/github.com/zardan4/petition-rest)](https://goreportcard.com/report/github.com/zardan4/petition-rest)
@@ -222,16 +223,13 @@ Response
 </details>
 
 ## Running:
-- docker pull postgres 
-- docker run --name=petitions-resr -e POSTGRES_PASSWORD='qwerty123' -p 5433:5432 -d postgres
-- migrate -path ./schema -database 'postgres://postgres:qwerty123@localhost:5433/postgres?sslmode=disable' up
-- Configure .env & /configs files
-- go run cmd/main.go
-
-### .env example:
-```env
-POSTGRES_PASSWORD='<YOUR_PASSWORD>'
+Firstly, configure your .env
+```makefile
+make run # run containers
+```
+```makefile
+make migrate # init tables
 ```
 ## TODO
-- docker-compose
-- unit tests
+- ~~docker-compose~~
+- ~~unit tests~~
