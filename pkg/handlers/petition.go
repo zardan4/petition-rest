@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -49,7 +50,7 @@ func (h *Handler) createPetition(ctx *gin.Context) {
 	var input createPetitionInput
 	err := ctx.BindJSON(&input)
 	if err != nil {
-		newErrorResponse(ctx, http.StatusBadRequest, err.Error())
+		newErrorResponse(ctx, http.StatusBadRequest, errors.New("invalid request body").Error())
 		return
 	}
 
@@ -98,7 +99,7 @@ func (h *Handler) updatePetition(ctx *gin.Context) {
 	var input petitions.UpdatePetitionInput
 	err := ctx.BindJSON(&input)
 	if err != nil {
-		newErrorResponse(ctx, http.StatusBadRequest, err.Error())
+		newErrorResponse(ctx, http.StatusBadRequest, errors.New("invalid request body").Error())
 		return
 	}
 

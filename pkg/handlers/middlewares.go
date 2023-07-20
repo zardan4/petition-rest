@@ -16,14 +16,28 @@ const (
 
 func (h *Handler) authRequired(c *gin.Context) {
 	token := c.GetHeader(authHeader)
+	// no token was find
 	if token == "" {
-		newErrorResponse(c, http.StatusUnauthorized, "not authorized")
+		newErrorResponse(c, http.StatusUnauthorized, "not correct auth token header")
 		return
 	}
 
 	headersParts := strings.Split(token, " ")
+	// if not enough parts of token
 	if len(headersParts) != 2 {
-		newErrorResponse(c, http.StatusUnauthorized, "not correct auth token format")
+		newErrorResponse(c, http.StatusUnauthorized, "not correct auth token value")
+		return
+	}
+
+	// if not correct "Bearer" part
+	if headersParts[0] != "Bearer" {
+		newErrorResponse(c, http.StatusUnauthorized, "not correct auth token value")
+		return
+	}
+
+	// if no token
+	if len(strings.Trim(headersParts[1], " ")) == 0 {
+		newErrorResponse(c, http.StatusUnauthorized, "token is empty")
 		return
 	}
 

@@ -5,6 +5,8 @@ import (
 	"github.com/zardan4/petition-rest/pkg/repository"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type Authorization interface {
 	CreateUser(user petitions.User) (int, error)
 	GenerateToken(name, password string) (string, error)

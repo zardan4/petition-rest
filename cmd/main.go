@@ -25,12 +25,6 @@ func init() {
 		logrus.Fatalf("Failed to initialize configuration: %v", err)
 	}
 
-	// db cfg
-	viper.SetConfigName("db")
-	if err := viper.MergeInConfig(); err != nil {
-		logrus.Fatalf("Failed to initialize configuration: %v", err)
-	}
-
 	// .env config
 	if err := godotenv.Load(); err != nil {
 		logrus.Fatalf("Error loading env file: %v", err)
@@ -55,13 +49,13 @@ func main() {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
 
 	db, err := repository.NewPostgresDB(repository.PostgresConfig{
-		Host: viper.GetString("db.host"),
-		Port: viper.GetString("db.port"),
+		Host: os.Getenv("POSTGRES_HOST"),
+		Port: os.Getenv("POSTGRES_INSIDE_PORT"),
 
-		Username: viper.GetString("db.username"),
-		DBName:   viper.GetString("db.dbname"),
+		Username: os.Getenv("POSTGRES_USERNAME"),
+		DBName:   os.Getenv("POSTGRES_DBNAME"),
 		Password: os.Getenv("POSTGRES_PASSWORD"),
-		SSLMode:  viper.GetString("db.sslmode"),
+		SSLMode:  os.Getenv("POSTGRES_SSLMODE"),
 	})
 	if err != nil {
 		logrus.Fatalf("Failed to initialize database: %v", err)
@@ -73,7 +67,7 @@ func main() {
 
 	srv := new(petitions.Server)
 
-	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
+	if err := srv.Run(os.Getenv("SERVER_PORT"), handlers.InitRoutes()); err != nil {
 		logrus.Fatalf("Failed to initialize routes: %v", err)
 	}
 
