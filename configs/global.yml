@@ -1,1 +1,2 @@
-mode: "release"
+mode: "debug"
+docker: true

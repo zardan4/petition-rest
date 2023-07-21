@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -48,9 +51,16 @@ func init() {
 func main() {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
 
+	var dbPort string
+	if viper.GetString("docker") == "true" {
+		dbPort = os.Getenv("POSTGRES_INSIDE_PORT")
+	} else {
+		dbPort = os.Getenv("POSTGRES_PORT")
+	}
+
 	db, err := repository.NewPostgresDB(repository.PostgresConfig{
 		Host: os.Getenv("POSTGRES_HOST"),
-		Port: os.Getenv("POSTGRES_INSIDE_PORT"),
+		Port: dbPort,
 
 		Username: os.Getenv("POSTGRES_USERNAME"),
 		DBName:   os.Getenv("POSTGRES_DBNAME"),
@@ -71,5 +81,19 @@ func main() {
 		logrus.Fatalf("Failed to initialize routes: %v", err)
 	}
 
-	logrus.Print("server started")
+	logrus.Println("server started")
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+	<-quit
+
+	logrus.Println("server shutting down")
+
+	if err := srv.Shutdown(context.Background()); err != nil {
+		logrus.Errorf("error occured on server shutting down: %s", err.Error())
+	}
+
+	if err := db.Close(); err != nil {
+		logrus.Errorf("error occured on db connection close: %s", err.Error())
+	}
 }
