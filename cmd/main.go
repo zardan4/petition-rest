@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -77,9 +78,11 @@ func main() {
 
 	srv := new(petitions.Server)
 
-	if err := srv.Run(os.Getenv("SERVER_PORT"), handlers.InitRoutes()); err != nil {
-		logrus.Fatalf("Failed to initialize routes: %v", err)
-	}
+	go func() {
+		if err := srv.Run(os.Getenv("SERVER_PORT"), handlers.InitRoutes()); err != nil {
+			logrus.Fatalf("Failed to initialize routes: %v", err)
+		}
+	}()
 
 	logrus.Println("server started")
 
@@ -89,11 +92,18 @@ func main() {
 
 	logrus.Println("server shutting down")
 
-	if err := srv.Shutdown(context.Background()); err != nil {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
 		logrus.Errorf("error occured on server shutting down: %s", err.Error())
 	}
 
 	if err := db.Close(); err != nil {
 		logrus.Errorf("error occured on db connection close: %s", err.Error())
 	}
+
+	<-ctx.Done()
+
+	logrus.Println("server exiting")
 }
