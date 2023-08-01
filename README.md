@@ -210,7 +210,7 @@ Response
 
 <br>
 
-#### DELETE /petitions/{id}/subs/{sign_id}. Delete specified signature for petition
+#### DELETE /petitions/{id}/subs. Delete signature for petition by user
 ```go
 DeleteSub(subId, petitionId, userId int) error
 ```
