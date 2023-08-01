@@ -64,7 +64,7 @@ func (s *SubsPostgres) CreateSub(petitionId, userId int) (int, error) {
 	return subId, tx.Commit()
 }
 
-func (s *SubsPostgres) DeleteSub(subId, petitionId, userId int) error {
+func (s *SubsPostgres) DeleteSub(petitionId, userId int) error {
 	// query := fmt.Sprintf(`DELETE FROM %s st
 	// USING %s ps, %s up
 	// WHERE ps.sub_id=st.id AND ps.sub_id=$1
@@ -73,15 +73,16 @@ func (s *SubsPostgres) DeleteSub(subId, petitionId, userId int) error {
 	// 	subsTable, petitionsSubsTable, usersPetitionsTable)
 	query := fmt.Sprintf(`DELETE FROM %s st
 	USING %s ps, %s us, %s up
-	WHERE st.id=ps.sub_id AND st.id=$1
-	AND us.id=ps.user_id AND ps.user_id=$2
-	AND ps.petition_id=up.petition_id AND ps.petition_id=$3`,
+	WHERE st.id=ps.sub_id
+	AND us.id=ps.user_id AND ps.user_id=$1
+	AND ps.petition_id=up.petition_id AND ps.petition_id=$2`,
 		subsTable, petitionsSubsTable, usersTable, usersPetitionsTable)
 
-	res, err := s.db.Exec(query, subId, userId, petitionId)
+	res, err := s.db.Exec(query, userId, petitionId)
 	if err != nil {
 		return err
 	}
+
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
 		return err

@@ -21,7 +21,7 @@ type Petition interface {
 type Subs interface {
 	GetAllSubs(petitionId int) ([]petitions.Sub, error)
 	CreateSub(petitionId, userId int) (int, error)
-	DeleteSub(subId, petitionId, userId int) error
+	DeleteSub(petitionId, userId int) error
 	CheckSignature(petitionId, userId int) (bool, error)
 }
 

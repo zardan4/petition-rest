@@ -47,7 +47,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 				signs.GET("/", h.getAllSubs)
 				signs.POST("/", h.createSub)
 
-				signs.DELETE("/:sign_id", h.deleteSub)
+				signs.DELETE("/", h.deleteSub)
 			}
 		}
 	}

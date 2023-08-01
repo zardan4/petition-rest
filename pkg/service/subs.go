@@ -23,8 +23,8 @@ func (s *SubsService) CreateSub(petitionId, userId int) (int, error) {
 	return s.repo.Subs.CreateSub(petitionId, userId)
 }
 
-func (s *SubsService) DeleteSub(subId, petitionId, userId int) error {
-	return s.repo.Subs.DeleteSub(subId, petitionId, userId)
+func (s *SubsService) DeleteSub(petitionId, userId int) error {
+	return s.repo.Subs.DeleteSub(petitionId, userId)
 }
 
 func (s *SubsService) CheckSignature(petitionId, userId int) (bool, error) {

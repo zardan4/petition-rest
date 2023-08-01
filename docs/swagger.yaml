@@ -340,6 +340,41 @@ paths:
       tags:
       - signatories
   /api/petitions/{id}/subs:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes signatorie by petition
+      operationId: delete-signatorie
+      parameters:
+      - description: Petition id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Deletes signatorie
+      tags:
+      - signatories
     get:
       consumes:
       - application/json
@@ -408,47 +443,6 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Create signatorie
-      tags:
-      - signatories
-  /api/petitions/{id}/subs/{sign_id}:
-    delete:
-      consumes:
-      - application/json
-      description: Deletes signatorie by petition
-      operationId: delete-signatorie
-      parameters:
-      - description: Petition id
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Signatorie id
-        in: path
-        name: sign_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.statusResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.errorResponse'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/handlers.errorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: Deletes signatorie
       tags:
       - signatories
   /auth/signin:

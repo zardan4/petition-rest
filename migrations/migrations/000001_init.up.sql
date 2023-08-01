@@ -34,5 +34,6 @@ CREATE TABLE petitions_items
     id serial not null unique,
     sub_id int references subs_items (id) on delete cascade not null,
     petition_id int references petitions_lists (id) on delete cascade not null,
-    user_id int references users (id) on delete cascade not null unique
+    user_id int references users (id) on delete cascade not null,
+    constraint id_userid UNIQUE (petition_id,user_id)
 );

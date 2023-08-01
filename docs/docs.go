@@ -456,9 +456,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/petitions/{id}/subs/{sign_id}": {
+            },
             "delete": {
                 "security": [
                     {
@@ -482,13 +480,6 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Petition id",
                         "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Signatorie id",
-                        "name": "sign_id",
                         "in": "path",
                         "required": true
                     }

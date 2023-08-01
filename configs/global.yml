@@ -1,2 +1,2 @@
 mode: "debug"
-docker: true
+docker: false

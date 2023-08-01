@@ -77,12 +77,16 @@ func (s *PetitionPostgres) DeletePetition(petitionId, userId int) error {
 	query := fmt.Sprintf("DELETE FROM %s pl USING %s ul WHERE pl.id=ul.petition_id AND ul.user_id=$1 AND ul.petition_id=$2", petitionsTable, usersPetitionsTable)
 	res, err := s.db.Exec(query, userId, petitionId)
 
+	if err != nil {
+		return err
+	}
+
 	rowsChanged, _ := res.RowsAffected()
 	if rowsChanged == 0 {
 		return errors.New("no rows affected")
 	}
 
-	return err
+	return nil
 }
 
 func (s *PetitionPostgres) UpdatePetition(petition petitions.UpdatePetitionInput, petitionId, userId int) error {
@@ -128,10 +132,14 @@ func (s *PetitionPostgres) UpdatePetition(petition petitions.UpdatePetitionInput
 
 	res, err := s.db.Exec(query, args...)
 
+	if err != nil {
+		return err
+	}
+
 	rowsChanged, _ := res.RowsAffected()
 	if rowsChanged == 0 {
 		return errors.New("no rows affected")
 	}
 
-	return err
+	return nil
 }
