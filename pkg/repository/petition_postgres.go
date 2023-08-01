@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -74,7 +75,12 @@ func (s *PetitionPostgres) GetPetition(petitionId int) (petitions.Petition, erro
 
 func (s *PetitionPostgres) DeletePetition(petitionId, userId int) error {
 	query := fmt.Sprintf("DELETE FROM %s pl USING %s ul WHERE pl.id=ul.petition_id AND ul.user_id=$1 AND ul.petition_id=$2", petitionsTable, usersPetitionsTable)
-	_, err := s.db.Exec(query, userId, petitionId)
+	res, err := s.db.Exec(query, userId, petitionId)
+
+	rowsChanged, _ := res.RowsAffected()
+	if rowsChanged == 0 {
+		return errors.New("no rows affected")
+	}
 
 	return err
 }
@@ -120,7 +126,12 @@ func (s *PetitionPostgres) UpdatePetition(petition petitions.UpdatePetitionInput
 
 	args = append(args, petitionId, userId)
 
-	_, err := s.db.Exec(query, args...)
+	res, err := s.db.Exec(query, args...)
+
+	rowsChanged, _ := res.RowsAffected()
+	if rowsChanged == 0 {
+		return errors.New("no rows affected")
+	}
 
 	return err
 }

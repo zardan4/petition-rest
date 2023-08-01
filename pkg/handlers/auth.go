@@ -7,6 +7,18 @@ import (
 	petitions "github.com/zardan4/petition-rest"
 )
 
+// @Summary SignUp
+// @Tags auth
+// @Description Create account
+// @ID signup
+// @Accept  json
+// @Produce  json
+// @Param input body petitions.User true "Account info"
+// @Success 200 {object} idResponse
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /auth/signup [post]
 func (h *Handler) signUp(c *gin.Context) {
 	var input petitions.User
 
@@ -21,8 +33,8 @@ func (h *Handler) signUp(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, map[string]interface{}{
-		"id": id,
+	c.JSON(http.StatusCreated, idResponse{
+		Id: id,
 	})
 }
 
@@ -31,6 +43,22 @@ type singInInput struct {
 	Password string `json:"password" binding:"required"`
 }
 
+type signInResponse struct {
+	Token string `json:"token"`
+}
+
+// @Summary SignIn
+// @Tags auth
+// @Description Enter account
+// @ID signin
+// @Accept  json
+// @Produce  json
+// @Param input body singInInput true "Account info"
+// @Success 200 {object} signInResponse
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /auth/signin [post]
 func (h *Handler) signIn(c *gin.Context) {
 	var input singInInput
 
@@ -45,7 +73,7 @@ func (h *Handler) signIn(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"token": token,
+	c.JSON(http.StatusOK, signInResponse{
+		Token: token,
 	})
 }

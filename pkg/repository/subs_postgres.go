@@ -86,9 +86,9 @@ func (s *SubsPostgres) DeleteSub(subId, petitionId, userId int) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(subId, petitionId, userId)
+
 	if rowsAffected == 0 {
-		return errors.New("didn't find any rows affected")
+		return errors.New("no rows affected")
 	}
 
 	return nil

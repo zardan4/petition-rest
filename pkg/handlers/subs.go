@@ -13,6 +13,19 @@ type getAllSubsResponses struct {
 	Data []petitions.Sub `json:"data"`
 }
 
+// @Summary Gets all signatories
+// @Security ApiKeyAuth
+// @Tags signatories
+// @Description Get all signatories by petition
+// @ID get-signatories
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Petition id"
+// @Success 200 {object} getAllSubsResponses
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/petitions/{id}/subs [get]
 func (h *Handler) getAllSubs(ctx *gin.Context) {
 	petitionId, err := strconv.Atoi(ctx.Param(petitionIdParam))
 	if err != nil {
@@ -31,6 +44,19 @@ func (h *Handler) getAllSubs(ctx *gin.Context) {
 	})
 }
 
+// @Summary Create signatorie
+// @Security ApiKeyAuth
+// @Tags signatories
+// @Description Creates new signatorie by petition
+// @ID create-signatorie
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Petition id"
+// @Success 200 {object} idResponse
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/petitions/{id}/subs [post]
 func (h *Handler) createSub(ctx *gin.Context) {
 	userId, err := h.getUserId(ctx)
 	if err != nil {
@@ -62,11 +88,25 @@ func (h *Handler) createSub(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, map[string]interface{}{
-		"id": createdSubId,
+	ctx.JSON(http.StatusCreated, idResponse{
+		Id: createdSubId,
 	})
 }
 
+// @Summary Deletes signatorie
+// @Security ApiKeyAuth
+// @Tags signatories
+// @Description Deletes signatorie by petition
+// @ID delete-signatorie
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Petition id"
+// @Param sign_id path int true "Signatorie id"
+// @Success 200 {object} statusResponse
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/petitions/{id}/subs/{sign_id} [delete]
 func (h *Handler) deleteSub(ctx *gin.Context) {
 	userId, err := h.getUserId(ctx)
 	if err != nil {
@@ -97,6 +137,23 @@ func (h *Handler) deleteSub(ctx *gin.Context) {
 	})
 }
 
+type checkSignatureResponse struct {
+	Signed bool `json:"signed"`
+}
+
+// @Summary Checks signatorie
+// @Security ApiKeyAuth
+// @Tags signatories
+// @Description Checks signatorie by petition
+// @ID check-signatorie
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Petition id"
+// @Success 200 {object} checkSignatureResponse
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/petitions/{id}/signed/ [get]
 func (h *Handler) checkSignature(ctx *gin.Context) {
 	userId, err := h.getUserId(ctx)
 	if err != nil {
@@ -116,7 +173,7 @@ func (h *Handler) checkSignature(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, map[string]interface{}{
-		"signed": signed,
+	ctx.JSON(http.StatusOK, checkSignatureResponse{
+		Signed: signed,
 	})
 }

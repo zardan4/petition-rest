@@ -49,6 +49,17 @@ func init() {
 	}
 }
 
+// @title Petitions REST API Documentation
+// @version 1.0
+// @description Can be used for writing small petitions interfaces
+
+// @host localhost:8080
+// @BasePath  /
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+
 func main() {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
 

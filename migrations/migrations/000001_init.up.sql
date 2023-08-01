@@ -2,7 +2,7 @@ CREATE TABLE users
 (
     id serial not null unique,
     name varchar(255) not null,
-    grade int not null unique,
+    grade int not null,
     password_hash varchar(255) not null
 );
 

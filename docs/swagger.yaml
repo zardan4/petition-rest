@@ -1,0 +1,529 @@
+basePath: /
+definitions:
+  handlers.checkSignatureResponse:
+    properties:
+      signed:
+        type: boolean
+    type: object
+  handlers.createPetitionInput:
+    properties:
+      text:
+        type: string
+      title:
+        type: string
+    required:
+    - text
+    - title
+    type: object
+  handlers.errorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  handlers.getAllPetitionsResponses:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/petitions.Petition'
+        type: array
+    type: object
+  handlers.getAllSubsResponses:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/petitions.Sub'
+        type: array
+    type: object
+  handlers.idResponse:
+    properties:
+      id:
+        type: integer
+    type: object
+  handlers.signInResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  handlers.singInInput:
+    properties:
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - name
+    - password
+    type: object
+  handlers.statusResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  petitions.Petition:
+    properties:
+      answer:
+        type: string
+      date:
+        type: string
+      id:
+        type: integer
+      text:
+        type: string
+      timeend:
+        type: string
+      title:
+        type: string
+    required:
+    - date
+    - text
+    - timeend
+    - title
+    type: object
+  petitions.Sub:
+    properties:
+      date:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      userId:
+        type: string
+    required:
+    - date
+    type: object
+  petitions.UpdatePetitionInput:
+    properties:
+      answer:
+        type: string
+      date:
+        type: string
+      text:
+        type: string
+      timeend:
+        type: string
+      title:
+        type: string
+    type: object
+  petitions.User:
+    properties:
+      grade:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - grade
+    - name
+    - password
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Can be used for writing small petitions interfaces
+  title: Petitions REST API Documentation
+  version: "1.0"
+paths:
+  /api/petitions:
+    get:
+      consumes:
+      - application/json
+      description: Get all petitions
+      operationId: get-petitions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.getAllPetitionsResponses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get all petitions
+      tags:
+      - petitions
+    post:
+      consumes:
+      - application/json
+      description: Creates new petition
+      operationId: create-petition
+      parameters:
+      - description: Petition info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createPetitionInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.idResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create petition
+      tags:
+      - petitions
+  /api/petitions/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete petition by id
+      operationId: delete-petition
+      parameters:
+      - description: Petition id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete petition
+      tags:
+      - petitions
+    get:
+      consumes:
+      - application/json
+      description: Get petition
+      operationId: get-petition
+      parameters:
+      - description: Petition id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/petitions.Petition'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get petition
+      tags:
+      - petitions
+    put:
+      consumes:
+      - application/json
+      description: Update petition by id
+      operationId: update-petition
+      parameters:
+      - description: Petition id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated petition content
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/petitions.UpdatePetitionInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update petition
+      tags:
+      - petitions
+  /api/petitions/{id}/signed/:
+    get:
+      consumes:
+      - application/json
+      description: Checks signatorie by petition
+      operationId: check-signatorie
+      parameters:
+      - description: Petition id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.checkSignatureResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Checks signatorie
+      tags:
+      - signatories
+  /api/petitions/{id}/subs:
+    get:
+      consumes:
+      - application/json
+      description: Get all signatories by petition
+      operationId: get-signatories
+      parameters:
+      - description: Petition id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.getAllSubsResponses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Gets all signatories
+      tags:
+      - signatories
+    post:
+      consumes:
+      - application/json
+      description: Creates new signatorie by petition
+      operationId: create-signatorie
+      parameters:
+      - description: Petition id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.idResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create signatorie
+      tags:
+      - signatories
+  /api/petitions/{id}/subs/{sign_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes signatorie by petition
+      operationId: delete-signatorie
+      parameters:
+      - description: Petition id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Signatorie id
+        in: path
+        name: sign_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Deletes signatorie
+      tags:
+      - signatories
+  /auth/signin:
+    post:
+      consumes:
+      - application/json
+      description: Enter account
+      operationId: signin
+      parameters:
+      - description: Account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.singInInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.signInResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+      summary: SignIn
+      tags:
+      - auth
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Create account
+      operationId: signup
+      parameters:
+      - description: Account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/petitions.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.idResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+      summary: SignUp
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
