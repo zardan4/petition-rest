@@ -6,11 +6,11 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	petitions "github.com/zardan4/petition-rest/internal/core"
+	"github.com/zardan4/petition-rest/internal/core"
 )
 
 type getAllPetitionsResponses struct {
-	Data []petitions.Petition `json:"data"`
+	Data []core.Petition `json:"data"`
 }
 
 // @Summary Get all petitions
@@ -45,7 +45,7 @@ func (h *Handler) getAllPetitions(ctx *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param id path int true "Petition id"
-// @Success 200 {object} petitions.Petition
+// @Success 200 {object} core.Petition
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
@@ -154,14 +154,14 @@ func (h *Handler) deletePetition(ctx *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param id path int true "Petition id"
-// @Param input body petitions.UpdatePetitionInput true "Updated petition content"
+// @Param input body core.UpdatePetitionInput true "Updated petition content"
 // @Success 200 {object} statusResponse
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /api/petitions/{id} [put]
 func (h *Handler) updatePetition(ctx *gin.Context) {
-	var input petitions.UpdatePetitionInput
+	var input core.UpdatePetitionInput
 	err := ctx.BindJSON(&input)
 	if err != nil {
 		newErrorResponse(ctx, http.StatusBadRequest, errors.New("invalid request body").Error())

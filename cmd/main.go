@@ -14,6 +14,7 @@ import (
 	"github.com/zardan4/petition-rest/internal/service"
 	repository "github.com/zardan4/petition-rest/internal/storage/psql"
 	handlers "github.com/zardan4/petition-rest/internal/transport/rest"
+	"github.com/zardan4/petition-rest/pkg/hashing"
 
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -83,8 +84,10 @@ func main() {
 		logrus.Fatalf("Failed to initialize database: %v", err)
 	}
 
+	hasher := hashing.NewSHA256Hasher(os.Getenv("HASHER_SALT"))
+
 	repo := repository.NewRepository(db)
-	services := service.NewService(repo)
+	services := service.NewService(repo, hasher, []byte(os.Getenv("JWT_SIGNING_KEY")), viper.GetDuration("auth.jwtTTL"))
 	handlers := handlers.NewHandler(services)
 
 	srv := new(petitions.Server)

@@ -83,3 +83,14 @@ func (h *Handler) getUserId(c *gin.Context) (int, error) {
 
 	return userIdInt, nil
 }
+
+func (h *Handler) userExists(c *gin.Context) {
+	userid, err := h.getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	}
+
+	if !h.services.Authorization.CheckUserExistsById(userid) {
+		newErrorResponse(c, http.StatusNotFound, "user does not exist")
+	}
+}

@@ -1,86 +1,81 @@
 package service
 
 import (
-	"crypto/sha256"
+	"database/sql"
 	"errors"
-	"fmt"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 	petitions "github.com/zardan4/petition-rest/internal/core"
 	repository "github.com/zardan4/petition-rest/internal/storage/psql"
+	"github.com/zardan4/petition-rest/pkg/hashing"
 )
-
-const (
-	_salt       = "!fKP5wTxWa/nwO6q2k3xiRru"
-	_signingKey = "Ht+Jr9)XYIm?v5tnSP.5meHIZntVVZDN32+*"
-	_tokenTTL   = 12 * time.Hour
-)
-
-type tokenClaims struct {
-	jwt.StandardClaims
-	UserId int `json:"user_id"`
-}
 
 type AuthorizationService struct {
-	repo *repository.Repository
+	repo   *repository.Repository
+	hasher *hashing.SHA256Hasher
+
+	HMACSecret []byte
+	tokenTTL   time.Duration
 }
 
-func NewAuthorizationService(repo *repository.Repository) *AuthorizationService {
+func NewAuthorizationService(repo *repository.Repository, hasher *hashing.SHA256Hasher, signingKey []byte, tokenTTL time.Duration) *AuthorizationService {
 	return &AuthorizationService{
-		repo: repo,
+		repo:       repo,
+		hasher:     hasher,
+		HMACSecret: signingKey,
+		tokenTTL:   tokenTTL,
 	}
 }
 
 func (a *AuthorizationService) CreateUser(user petitions.User) (int, error) {
-	hashedPassword := hashPassword(user.Password)
+	hashedPassword := a.hasher.Hash(user.Password)
 	user.Password = hashedPassword
 
 	return a.repo.CreateUser(user)
 }
 
 func (a *AuthorizationService) GenerateToken(name, password string) (string, error) {
-	hashedPassword := hashPassword(password)
+	hashedPassword := a.hasher.Hash(password)
 
 	user, err := a.repo.GetUserByName(name, hashedPassword)
 	if err != nil {
 		return "", err
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
-		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(_tokenTTL).Unix(),
-			IssuedAt:  time.Now().Unix(),
-		},
-		user.Id,
-	})
+	token := jwt.New(jwt.SigningMethodHS256)
 
-	return token.SignedString([]byte(_signingKey))
+	claims := token.Claims.(jwt.MapClaims)
+	claims["exp"] = time.Now().Add(a.tokenTTL).Unix()
+	claims["iat"] = time.Now().Unix()
+	claims["user_id"] = user.Id
+
+	return token.SignedString(a.HMACSecret)
 }
 
 func (a *AuthorizationService) ParseToken(token string) (int, error) {
-	var claims tokenClaims
-
-	parsed, err := jwt.ParseWithClaims(token, &claims, func(token *jwt.Token) (interface{}, error) {
+	parsed, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
 		}
-		return []byte(_signingKey), nil
+		return a.HMACSecret, nil
 	})
 	if err != nil {
 		return 0, err
 	}
 
-	if !parsed.Valid {
+	claims, ok := parsed.Claims.(jwt.MapClaims)
+	if !parsed.Valid || !ok {
 		return 0, errors.New("invalid parsed token")
 	}
 
-	return claims.UserId, nil
+	userId := claims["user_id"].(float64)
+
+	return int(userId), nil
 }
 
-func hashPassword(password string) string {
-	hash := sha256.New()
-	hash.Write([]byte(password))
+func (a *AuthorizationService) CheckUserExistsById(id int) bool {
+	_, err := a.repo.GetUserByIdWithoutPassword(id)
 
-	return fmt.Sprintf("%x", hash.Sum([]byte(_salt)))
+	return err != sql.ErrNoRows
 }

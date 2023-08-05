@@ -38,3 +38,12 @@ func (a *AuthorizationPostgres) GetUserByName(name, password string) (petitions.
 
 	return user, err
 }
+
+func (a *AuthorizationPostgres) GetUserByIdWithoutPassword(id int) (petitions.User, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE id=$1", usersTable)
+
+	var user petitions.User
+	err := a.db.Get(&user, query, id)
+
+	return user, err
+}

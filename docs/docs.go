@@ -151,7 +151,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/petitions.Petition"
+                            "$ref": "#/definitions/core.Petition"
                         }
                     },
                     "400": {
@@ -206,7 +206,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/petitions.UpdatePetitionInput"
+                            "$ref": "#/definitions/core.UpdatePetitionInput"
                         }
                     }
                 ],
@@ -586,7 +586,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/petitions.User"
+                            "$ref": "#/definitions/core.User"
                         }
                     }
                 ],
@@ -620,6 +620,94 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "core.Petition": {
+            "type": "object",
+            "required": [
+                "date",
+                "text",
+                "timeend",
+                "title"
+            ],
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "timeend": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "core.Sub": {
+            "type": "object",
+            "required": [
+                "date"
+            ],
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "core.UpdatePetitionInput": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "timeend": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "core.User": {
+            "type": "object",
+            "required": [
+                "grade",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "grade": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.checkSignatureResponse": {
             "type": "object",
             "properties": {
@@ -657,7 +745,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/petitions.Petition"
+                        "$ref": "#/definitions/core.Petition"
                     }
                 }
             }
@@ -668,7 +756,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/petitions.Sub"
+                        "$ref": "#/definitions/core.Sub"
                     }
                 }
             }
@@ -708,94 +796,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "petitions.Petition": {
-            "type": "object",
-            "required": [
-                "date",
-                "text",
-                "timeend",
-                "title"
-            ],
-            "properties": {
-                "answer": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "text": {
-                    "type": "string"
-                },
-                "timeend": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "petitions.Sub": {
-            "type": "object",
-            "required": [
-                "date"
-            ],
-            "properties": {
-                "date": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "string"
-                }
-            }
-        },
-        "petitions.UpdatePetitionInput": {
-            "type": "object",
-            "properties": {
-                "answer": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "text": {
-                    "type": "string"
-                },
-                "timeend": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "petitions.User": {
-            "type": "object",
-            "required": [
-                "grade",
-                "name",
-                "password"
-            ],
-            "properties": {
-                "grade": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "password": {
                     "type": "string"
                 }
             }

@@ -8,4 +8,4 @@ migrate:
 	docker-compose run --rm migrate
 
 swag:
-	swag init -g cmd/api/main.go
+	swag init -g cmd/main.go

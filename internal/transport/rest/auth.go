@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	petitions "github.com/zardan4/petition-rest/internal/core"
+	"github.com/zardan4/petition-rest/internal/core"
 )
 
 // @Summary SignUp
@@ -13,14 +13,14 @@ import (
 // @ID signup
 // @Accept  json
 // @Produce  json
-// @Param input body petitions.User true "Account info"
+// @Param input body core.User true "Account info"
 // @Success 200 {object} idResponse
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /auth/signup [post]
 func (h *Handler) signUp(c *gin.Context) {
-	var input petitions.User
+	var input core.User
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid request body")

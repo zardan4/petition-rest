@@ -29,7 +29,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/signin", h.signIn)
 	}
 
-	api := router.Group("/api", h.authRequired)
+	api := router.Group("/api", h.authRequired, h.userExists)
 	{
 		petitions := api.Group("/petitions")
 		{

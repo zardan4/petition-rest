@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	petitions "github.com/zardan4/petition-rest/internal/core"
+	core "github.com/zardan4/petition-rest/internal/core"
 )
 
 // MockAuthorization is a mock of Authorization interface.
@@ -34,8 +34,22 @@ func (m *MockAuthorization) EXPECT() *MockAuthorizationMockRecorder {
 	return m.recorder
 }
 
+// CheckUserExistsById mocks base method.
+func (m *MockAuthorization) CheckUserExistsById(id int) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckUserExistsById", id)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// CheckUserExistsById indicates an expected call of CheckUserExistsById.
+func (mr *MockAuthorizationMockRecorder) CheckUserExistsById(id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckUserExistsById", reflect.TypeOf((*MockAuthorization)(nil).CheckUserExistsById), id)
+}
+
 // CreateUser mocks base method.
-func (m *MockAuthorization) CreateUser(user petitions.User) (int, error) {
+func (m *MockAuthorization) CreateUser(user core.User) (int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUser", user)
 	ret0, _ := ret[0].(int)
@@ -132,10 +146,10 @@ func (mr *MockPetitionMockRecorder) DeletePetition(petitionId, userId interface{
 }
 
 // GetAllPetitions mocks base method.
-func (m *MockPetition) GetAllPetitions() ([]petitions.Petition, error) {
+func (m *MockPetition) GetAllPetitions() ([]core.Petition, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllPetitions")
-	ret0, _ := ret[0].([]petitions.Petition)
+	ret0, _ := ret[0].([]core.Petition)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -147,10 +161,10 @@ func (mr *MockPetitionMockRecorder) GetAllPetitions() *gomock.Call {
 }
 
 // GetPetition mocks base method.
-func (m *MockPetition) GetPetition(petitionId int) (petitions.Petition, error) {
+func (m *MockPetition) GetPetition(petitionId int) (core.Petition, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPetition", petitionId)
-	ret0, _ := ret[0].(petitions.Petition)
+	ret0, _ := ret[0].(core.Petition)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -162,7 +176,7 @@ func (mr *MockPetitionMockRecorder) GetPetition(petitionId interface{}) *gomock.
 }
 
 // UpdatePetition mocks base method.
-func (m *MockPetition) UpdatePetition(updatedPetition petitions.UpdatePetitionInput, petitionId, userId int) error {
+func (m *MockPetition) UpdatePetition(updatedPetition core.UpdatePetitionInput, petitionId, userId int) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdatePetition", updatedPetition, petitionId, userId)
 	ret0, _ := ret[0].(error)
@@ -229,24 +243,24 @@ func (mr *MockSubsMockRecorder) CreateSub(petitionId, userId interface{}) *gomoc
 }
 
 // DeleteSub mocks base method.
-func (m *MockSubs) DeleteSub(subId, petitionId, userId int) error {
+func (m *MockSubs) DeleteSub(petitionId, userId int) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteSub", subId, petitionId, userId)
+	ret := m.ctrl.Call(m, "DeleteSub", petitionId, userId)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // DeleteSub indicates an expected call of DeleteSub.
-func (mr *MockSubsMockRecorder) DeleteSub(subId, petitionId, userId interface{}) *gomock.Call {
+func (mr *MockSubsMockRecorder) DeleteSub(petitionId, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSub", reflect.TypeOf((*MockSubs)(nil).DeleteSub), subId, petitionId, userId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSub", reflect.TypeOf((*MockSubs)(nil).DeleteSub), petitionId, userId)
 }
 
 // GetAllSubs mocks base method.
-func (m *MockSubs) GetAllSubs(petitionId int) ([]petitions.Sub, error) {
+func (m *MockSubs) GetAllSubs(petitionId int) ([]core.Sub, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllSubs", petitionId)
-	ret0, _ := ret[0].([]petitions.Sub)
+	ret0, _ := ret[0].([]core.Sub)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

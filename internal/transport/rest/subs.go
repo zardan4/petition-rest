@@ -6,11 +6,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
-	petitions "github.com/zardan4/petition-rest/internal/core"
+	"github.com/zardan4/petition-rest/internal/core"
 )
 
 type getAllSubsResponses struct {
-	Data []petitions.Sub `json:"data"`
+	Data []core.Sub `json:"data"`
 }
 
 // @Summary Gets all signatories

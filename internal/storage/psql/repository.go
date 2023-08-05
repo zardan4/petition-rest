@@ -8,6 +8,7 @@ import (
 type Authorization interface {
 	CreateUser(user petitions.User) (int, error)
 	GetUserByName(name, password string) (petitions.User, error)
+	GetUserByIdWithoutPassword(id int) (petitions.User, error)
 }
 
 type Petition interface {

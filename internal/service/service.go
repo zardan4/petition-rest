@@ -1,8 +1,11 @@
 package service
 
 import (
+	"time"
+
 	petitions "github.com/zardan4/petition-rest/internal/core"
 	repository "github.com/zardan4/petition-rest/internal/storage/psql"
+	"github.com/zardan4/petition-rest/pkg/hashing"
 )
 
 //go:generate mockgen -source=service.go -destination=mocks/mock.go
@@ -11,6 +14,7 @@ type Authorization interface {
 	CreateUser(user petitions.User) (int, error)
 	GenerateToken(name, password string) (string, error)
 	ParseToken(token string) (int, error)
+	CheckUserExistsById(id int) bool
 }
 
 type Petition interface {
@@ -34,9 +38,9 @@ type Service struct {
 	Subs
 }
 
-func NewService(repo *repository.Repository) *Service {
+func NewService(repo *repository.Repository, hasher *hashing.SHA256Hasher, signingKey []byte, tokenTTL time.Duration) *Service {
 	return &Service{
-		Authorization: NewAuthorizationService(repo),
+		Authorization: NewAuthorizationService(repo, hasher, signingKey, tokenTTL),
 		Petition:      NewPetitionService(repo),
 		Subs:          NewSubsService(repo),
 	}
