@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/jmoiron/sqlx"
-	petitions "github.com/zardan4/petition-rest"
+	petitions "github.com/zardan4/petition-rest/internal/core"
 )
 
 type SubsPostgres struct {

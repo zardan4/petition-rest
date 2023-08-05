@@ -10,9 +10,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	petitions "github.com/zardan4/petition-rest"
-	"github.com/zardan4/petition-rest/pkg/service"
-	mock_service "github.com/zardan4/petition-rest/pkg/service/mocks"
+	petitions "github.com/zardan4/petition-rest/internal/core"
+	"github.com/zardan4/petition-rest/internal/service"
+	mock_service "github.com/zardan4/petition-rest/internal/service/mocks"
 )
 
 func TestHandler_signUp(t *testing.T) {

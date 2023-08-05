@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	petitions "github.com/zardan4/petition-rest"
-	"github.com/zardan4/petition-rest/pkg/repository"
+	petitions "github.com/zardan4/petition-rest/internal/core"
+	repository "github.com/zardan4/petition-rest/internal/storage/psql"
 )
 
 const (

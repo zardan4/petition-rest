@@ -5,7 +5,7 @@ run:
 	docker-compose up app
 
 migrate:
-	docker-compose run migrate
+	docker-compose run --rm migrate
 
 swag:
-	swag init -g cmd/main.go
+	swag init -g cmd/api/main.go

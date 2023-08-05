@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/jmoiron/sqlx"
-	petitions "github.com/zardan4/petition-rest"
+	petitions "github.com/zardan4/petition-rest/internal/core"
 )
 
 type Authorization interface {

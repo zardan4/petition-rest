@@ -9,8 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"github.com/zardan4/petition-rest/pkg/service"
-	mock_service "github.com/zardan4/petition-rest/pkg/service/mocks"
+	"github.com/zardan4/petition-rest/internal/service"
+	mock_service "github.com/zardan4/petition-rest/internal/service/mocks"
 )
 
 func TestHandler_authRequired(t *testing.T) {

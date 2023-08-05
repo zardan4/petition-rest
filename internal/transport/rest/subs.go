@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
-	petitions "github.com/zardan4/petition-rest"
+	petitions "github.com/zardan4/petition-rest/internal/core"
 )
 
 type getAllSubsResponses struct {

@@ -1,4 +1,4 @@
-package petitions
+package core
 
 import (
 	"context"

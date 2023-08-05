@@ -10,10 +10,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
-	petitions "github.com/zardan4/petition-rest"
-	"github.com/zardan4/petition-rest/pkg/handlers"
-	"github.com/zardan4/petition-rest/pkg/repository"
-	"github.com/zardan4/petition-rest/pkg/service"
+	petitions "github.com/zardan4/petition-rest/internal/core"
+	"github.com/zardan4/petition-rest/internal/service"
+	repository "github.com/zardan4/petition-rest/internal/storage/psql"
+	handlers "github.com/zardan4/petition-rest/internal/transport/rest"
 
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -65,19 +65,19 @@ func main() {
 
 	var dbPort string
 	if viper.GetString("docker") == "true" {
-		dbPort = os.Getenv("POSTGRES_INSIDE_PORT")
+		dbPort = os.Getenv("DB_INSIDE_PORT")
 	} else {
-		dbPort = os.Getenv("POSTGRES_PORT")
+		dbPort = os.Getenv("DB_PORT")
 	}
 
 	db, err := repository.NewPostgresDB(repository.PostgresConfig{
-		Host: os.Getenv("POSTGRES_HOST"),
+		Host: os.Getenv("DB_HOST"),
 		Port: dbPort,
 
-		Username: os.Getenv("POSTGRES_USERNAME"),
-		DBName:   os.Getenv("POSTGRES_DBNAME"),
-		Password: os.Getenv("POSTGRES_PASSWORD"),
-		SSLMode:  os.Getenv("POSTGRES_SSLMODE"),
+		Username: os.Getenv("DB_USERNAME"),
+		DBName:   os.Getenv("DB_DBNAME"),
+		Password: os.Getenv("DB_PASSWORD"),
+		SSLMode:  os.Getenv("DB_SSLMODE"),
 	})
 	if err != nil {
 		logrus.Fatalf("Failed to initialize database: %v", err)

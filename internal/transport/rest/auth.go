@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	petitions "github.com/zardan4/petition-rest"
+	petitions "github.com/zardan4/petition-rest/internal/core"
 )
 
 // @Summary SignUp

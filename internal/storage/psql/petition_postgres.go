@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	petitions "github.com/zardan4/petition-rest"
+	petitions "github.com/zardan4/petition-rest/internal/core"
 )
 
 type PetitionPostgres struct {
@@ -126,7 +126,8 @@ func (s *PetitionPostgres) UpdatePetition(petition petitions.UpdatePetitionInput
 
 	setQuery := strings.Join(setValues, ", ")
 
-	query := fmt.Sprintf("UPDATE %s pl SET %s FROM %s ul WHERE pl.id = ul.petition_id AND ul.petition_id = $%d AND ul.user_id = $%d", petitionsTable, setQuery, usersPetitionsTable, argId, argId+1)
+	query := fmt.Sprintf("UPDATE %s pl SET %s FROM %s ul WHERE pl.id = ul.petition_id AND ul.petition_id = $%d AND ul.user_id = $%d",
+		petitionsTable, setQuery, usersPetitionsTable, argId, argId+1)
 
 	args = append(args, petitionId, userId)
 

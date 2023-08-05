@@ -50,6 +50,24 @@ func (h *Handler) authRequired(c *gin.Context) {
 	c.Set(userCtx, userId)
 }
 
+// func (h *Handler) checkUsersPetition(ctx *gin.Context) {
+// 	userId, err := h.getUserId(ctx)
+// 	if err != nil {
+// 		newErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+// 		return
+// 	}
+
+// 	petitionId, err := strconv.Atoi(ctx.Param(petitionIdParam))
+
+// 	petition, err := h.services.GetPetition(petitionId)
+// 	if err != nil {
+// 		newErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+// 		return
+// 	}
+
+// 	if petition.
+// }
+
 func (h *Handler) getUserId(c *gin.Context) (int, error) {
 	userId, ok := c.Get(userCtx)
 	if !ok {

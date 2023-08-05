@@ -1,4 +1,4 @@
-package petitions
+package core
 
 type Petition struct {
 	Id      int    `json:"id"`
