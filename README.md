@@ -3,6 +3,7 @@
 ![GitHub go.mod Go version (subdirectory of monorepo)](https://img.shields.io/github/go-mod/go-version/zardan4/petition-rest)
 [![Go Report Card](https://goreportcard.com/badge/github.com/zardan4/petition-rest)](https://goreportcard.com/report/github.com/zardan4/petition-rest)
 ![GitHub Repo stars](https://img.shields.io/github/stars/zardan4/petition-rest)
+[![Go Reference](https://pkg.go.dev/badge/github.com/zardan4/petition-rest.svg)](https://pkg.go.dev/github.com/zardan4/petition-rest)
 
 # REST for petitions
 Handles requests for petitions, users and signatures. Can be used for writing small petitions interfaces
@@ -230,6 +231,10 @@ make run # run containers
 ```makefile
 make migrate # init tables
 ```
+```makefile
+make swag # init swagger
+```
 ## TODO
 - ~~docker-compose~~
 - ~~unit tests~~
+- ~~swagger~~
