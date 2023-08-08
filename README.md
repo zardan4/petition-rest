@@ -17,7 +17,7 @@ Handles requests for petitions, users and signatures. Can be used for writing sm
 ```go
 CreateUser(user petitions.User) (int, error)
 ```
-Request body
+Request bodyad
 ```json
 {
     "name": "mark zuckerberg",
@@ -36,21 +36,72 @@ Response
 
 #### POST /signin. Sign in as old user
 ```go
-GetUserByName(name, password string) (petitions.User, error)
+GenerateTokens(name, password, fingerprint string) (core.JWTPair, error)
 ```
 Request body
 ```json
 {
     "name": "mark zuckerberg",
-    "password": "secretpassword123"
+    "password": "secretpassword123",
+    "fingerprint": "your_unique_device_fingerprint"
 }
 ```
 Response
 ```json
 {
-    "token": usersJWT
+    "access_token": usersJWT,
+    "refresh_token": userRefreshToken
 }
 ```
+
+<br>
+
+#### POST /refresh. Refresh user's tokens by refresh token. Delete previous refresh token
+```go
+RefreshTokens(refreshToken, fingerprint string) (core.JWTPair, error)
+```
+Request body
+```json
+{
+    "fingerprint": "your_unique_device_fingerprint"
+}
+```
+Cookie
+```json
+{
+    "refresh_token": "refresh_token_cookie"
+}
+```
+Response
+```json
+{
+    "access_token": newUsersJWT,
+    "refresh_token": newUserRefreshToken
+}
+```
+
+<br>
+
+#### POST /logout. Delete user's refresh session
+```go
+Logout(refreshToken string) error
+```
+Cookie
+```json
+{
+    "refresh_token": "refresh_token_cookie"
+}
+```
+Response
+```json
+{
+    "status": "ok"
+}
+```
+
+### Additional
+- Refresh session depends on fingerprint too so make unique refresh session from each user's device and don't use the same fingerprint(generate it [here](https://www.npmjs.com/package/fingerprint-generator))
+- Follow [this scheme](https://www.figma.com/file/0KyFbPgCpoIK4BXovODFDl/Auth-JWT-scheme) to better understand how to use auth
 </details>
 
 <!-- petitions -->
