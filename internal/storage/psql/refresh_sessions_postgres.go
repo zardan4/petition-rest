@@ -62,7 +62,7 @@ func (a *AuthorizationPostgres) RefreshTokensAndReturnUser(refreshToken, fingerp
 
 	err = tx.Get(&refreshSession, query, refreshToken)
 	if err != nil {
-		tx.Rollback()
+		tx.Rollback() // nolint: errcheck
 		return core.User{}, err
 	}
 
@@ -71,19 +71,19 @@ func (a *AuthorizationPostgres) RefreshTokensAndReturnUser(refreshToken, fingerp
 
 	_, err = tx.Exec(query, refreshToken)
 	if err != nil {
-		tx.Rollback()
+		tx.Rollback() // nolint: errcheck
 		return core.User{}, err
 	}
 
 	// check if token is not expired
 	if refreshSession.CreatedAt.Add(refreshSession.ExpiresIn).Before(time.Now()) {
-		tx.Commit()
+		tx.Commit()                                             // nolint: errcheck
 		return core.User{}, errors.New("REFRESH_TOKEN_EXPIRED") // 401
 	}
 
 	// check if fingerprint is valid
 	if refreshSession.Fingerprint != fingerprint {
-		tx.Commit()
+		tx.Commit()                                               // nolint: errcheck
 		return core.User{}, errors.New("INVALID_REFRESH_SESSION") // 401
 	}
 
@@ -93,7 +93,7 @@ func (a *AuthorizationPostgres) RefreshTokensAndReturnUser(refreshToken, fingerp
 	var user core.User
 	err = tx.Get(&user, query, refreshSession.UserId)
 	if err != nil {
-		tx.Rollback()
+		tx.Rollback() // nolint: errcheck
 		return core.User{}, err
 	}
 

@@ -63,7 +63,10 @@ func (a *AuthorizationService) GenerateTokensById(userid int, fingerprint string
 	// if more refresh sessions than is allowed
 	if countOfRefreshSessions >= viper.GetInt("auth.maxDevidesSigned") {
 		// delete all previous sessions
-		a.repo.Authorization.DeleteAllRefreshSessionsByUserId(user.Id)
+		err = a.repo.Authorization.DeleteAllRefreshSessionsByUserId(user.Id)
+		if err != nil {
+			return core.JWTPair{}, err
+		}
 	}
 
 	refreshTokenTTL := viper.GetDuration("auth.refreshTTL")
