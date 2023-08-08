@@ -512,6 +512,59 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/refresh": {
+            "post": {
+                "description": "Refresh pair of tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Refresh tokens",
+                "operationId": "refresh",
+                "parameters": [
+                    {
+                        "description": "Fingerprint",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.refreshTokensInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.refreshTokensResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/signin": {
             "post": {
                 "description": "Enter account",
@@ -528,7 +581,7 @@ const docTemplate = `{
                 "operationId": "signin",
                 "parameters": [
                     {
-                        "description": "Account info",
+                        "description": "Account info and fingerprint",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -769,10 +822,35 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.refreshTokensInput": {
+            "type": "object",
+            "required": [
+                "fingerprint"
+            ],
+            "properties": {
+                "fingerprint": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.refreshTokensResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.signInResponse": {
             "type": "object",
             "properties": {
-                "token": {
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
                     "type": "string"
                 }
             }
@@ -780,10 +858,14 @@ const docTemplate = `{
         "handlers.singInInput": {
             "type": "object",
             "required": [
+                "fingerprint",
                 "name",
                 "password"
             ],
             "properties": {
+                "fingerprint": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },

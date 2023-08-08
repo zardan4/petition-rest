@@ -98,18 +98,37 @@ definitions:
       id:
         type: integer
     type: object
+  handlers.refreshTokensInput:
+    properties:
+      fingerprint:
+        type: string
+    required:
+    - fingerprint
+    type: object
+  handlers.refreshTokensResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
   handlers.signInResponse:
     properties:
-      token:
+      access_token:
+        type: string
+      refresh_token:
         type: string
     type: object
   handlers.singInInput:
     properties:
+      fingerprint:
+        type: string
       name:
         type: string
       password:
         type: string
     required:
+    - fingerprint
     - name
     - password
     type: object
@@ -445,6 +464,41 @@ paths:
       summary: Create signatorie
       tags:
       - signatories
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refresh pair of tokens
+      operationId: refresh
+      parameters:
+      - description: Fingerprint
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.refreshTokensInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.refreshTokensResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+      summary: Refresh tokens
+      tags:
+      - auth
   /auth/signin:
     post:
       consumes:
@@ -452,7 +506,7 @@ paths:
       description: Enter account
       operationId: signin
       parameters:
-      - description: Account info
+      - description: Account info and fingerprint
         in: body
         name: input
         required: true
