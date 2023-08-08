@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 
@@ -89,7 +88,7 @@ func (s *SubsPostgres) DeleteSub(petitionId, userId int) error {
 	}
 
 	if rowsAffected == 0 {
-		return errors.New("no rows affected")
+		return NoRowsAffectedError
 	}
 
 	return nil

@@ -98,6 +98,13 @@ definitions:
       id:
         type: integer
     type: object
+  handlers.logOutInput:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
   handlers.refreshTokensInput:
     properties:
       fingerprint:
@@ -464,6 +471,41 @@ paths:
       summary: Create signatorie
       tags:
       - signatories
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Delete refresh session
+      operationId: logout
+      parameters:
+      - description: refresh token. *in cookie
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.logOutInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errorResponse'
+      summary: Log out
+      tags:
+      - auth
   /auth/refresh:
     post:
       consumes:
@@ -471,7 +513,7 @@ paths:
       description: Refresh pair of tokens
       operationId: refresh
       parameters:
-      - description: Fingerprint
+      - description: Fingerprint. and refresh token in cookie
         in: body
         name: input
         required: true

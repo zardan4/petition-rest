@@ -93,6 +93,20 @@ func (mr *MockAuthorizationMockRecorder) GenerateTokensById(userid, fingerprint 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateTokensById", reflect.TypeOf((*MockAuthorization)(nil).GenerateTokensById), userid, fingerprint)
 }
 
+// Logout mocks base method.
+func (m *MockAuthorization) Logout(refreshToken string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Logout", refreshToken)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Logout indicates an expected call of Logout.
+func (mr *MockAuthorizationMockRecorder) Logout(refreshToken interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Logout", reflect.TypeOf((*MockAuthorization)(nil).Logout), refreshToken)
+}
+
 // ParseToken mocks base method.
 func (m *MockAuthorization) ParseToken(token string) (int, error) {
 	m.ctrl.T.Helper()

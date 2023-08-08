@@ -16,7 +16,9 @@ type Authorization interface {
 	GenerateTokensById(userid int, fingerprint string) (core.JWTPair, error)
 	ParseToken(token string) (int, error)
 	CheckUserExistsById(id int) bool
+	// refresh sessions
 	RefreshTokens(refreshToken, fingerprint string) (core.JWTPair, error)
+	Logout(refreshToken string) error
 }
 
 type Petition interface {

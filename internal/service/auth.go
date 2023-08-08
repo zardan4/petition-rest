@@ -130,3 +130,7 @@ func (a *AuthorizationService) CheckUserExistsById(id int) bool {
 
 	return err != sql.ErrNoRows
 }
+
+func (a *AuthorizationService) Logout(refreshToken string) error {
+	return a.repo.DeleteRefreshSession(refreshToken)
+}

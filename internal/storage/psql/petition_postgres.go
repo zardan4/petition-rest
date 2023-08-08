@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -83,7 +82,7 @@ func (s *PetitionPostgres) DeletePetition(petitionId, userId int) error {
 
 	rowsChanged, _ := res.RowsAffected()
 	if rowsChanged == 0 {
-		return errors.New("no rows affected")
+		return NoRowsAffectedError
 	}
 
 	return nil
@@ -139,7 +138,7 @@ func (s *PetitionPostgres) UpdatePetition(petition petitions.UpdatePetitionInput
 
 	rowsChanged, _ := res.RowsAffected()
 	if rowsChanged == 0 {
-		return errors.New("no rows affected")
+		return NoRowsAffectedError
 	}
 
 	return nil

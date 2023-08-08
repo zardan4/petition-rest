@@ -8,6 +8,10 @@ import (
 	"github.com/zardan4/petition-rest/internal/core"
 )
 
+const (
+	refreshTokenCookie = "refresh_token"
+)
+
 // @Summary SignUp
 // @Tags auth
 // @Description Create account
@@ -77,7 +81,7 @@ func (h *Handler) signIn(c *gin.Context) {
 	}
 
 	c.SetCookie(
-		"refresh_token",
+		refreshTokenCookie,
 		tokens.RefreshToken,
 		int(tokens.RefreshTokenTTL.Seconds()),
 		"/auth",
@@ -107,7 +111,7 @@ type refreshTokensResponse struct {
 // @ID refresh
 // @Accept  json
 // @Produce  json
-// @Param input body refreshTokensInput true "Fingerprint"
+// @Param input body refreshTokensInput true "Fingerprint. and refresh token in cookie"
 // @Success 200 {object} refreshTokensResponse
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
@@ -121,7 +125,7 @@ func (h *Handler) refreshTokens(c *gin.Context) {
 		return
 	}
 
-	refreshToken, err := c.Cookie("refresh_token")
+	refreshToken, err := c.Cookie(refreshTokenCookie)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "no refresh token cookie provided")
 		return
@@ -134,7 +138,7 @@ func (h *Handler) refreshTokens(c *gin.Context) {
 	}
 
 	c.SetCookie(
-		"refresh_token",
+		refreshTokenCookie,
 		tokens.RefreshToken,
 		int(tokens.RefreshTokenTTL.Seconds()),
 		"/auth",
@@ -146,5 +150,39 @@ func (h *Handler) refreshTokens(c *gin.Context) {
 	c.JSON(http.StatusOK, refreshTokensResponse{
 		AccessToken:  tokens.AccessToken,
 		RefreshToken: tokens.RefreshToken,
+	})
+}
+
+type logOutInput struct {
+	RefreshToken string `json:"refresh_token" binding:"required"`
+}
+
+// @Summary Log out
+// @Tags auth
+// @Description Delete refresh session
+// @ID logout
+// @Accept  json
+// @Produce  json
+// @Param input body logOutInput true "refresh token. *in cookie"
+// @Success 200 {object} statusResponse
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /auth/logout [post]
+func (h *Handler) logOut(c *gin.Context) {
+	refreshToken, err := c.Cookie(refreshTokenCookie)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "no refresh token cookie provided")
+		return
+	}
+
+	err = h.services.Authorization.Logout(refreshToken)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "ok",
 	})
 }

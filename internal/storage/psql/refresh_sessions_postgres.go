@@ -45,7 +45,11 @@ func (a *AuthorizationPostgres) DeleteAllRefreshSessionsByUserId(userid int) err
 func (a *AuthorizationPostgres) DeleteRefreshSession(refreshToken string) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE refresh_token=$1", refreshSessionsTable)
 
-	_, err := a.db.Exec(query, refreshToken)
+	res, err := a.db.Exec(query, refreshToken)
+
+	if affected, _ := res.RowsAffected(); affected == 0 {
+		return NoRowsAffectedError
+	}
 
 	return err
 }
