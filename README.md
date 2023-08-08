@@ -238,5 +238,4 @@ make swag # init swagger
 - ~~docker-compose~~
 - ~~unit tests~~
 - ~~swagger~~
-- delete refresh sessions on signing in from the same fingerprint
 - ~~log out endpoint~~

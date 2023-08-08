@@ -1,5 +1,7 @@
 package repository
 
-import "errors"
+import (
+	"errors"
+)
 
 var NoRowsAffectedError = errors.New("no rows affected")
