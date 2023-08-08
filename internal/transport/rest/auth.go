@@ -153,7 +153,7 @@ func (h *Handler) refreshTokens(c *gin.Context) {
 	})
 }
 
-type logOutInput struct {
+type logOutInput struct { // nolint:unused
 	RefreshToken string `json:"refresh_token" binding:"required"`
 }
 

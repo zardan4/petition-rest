@@ -3,7 +3,7 @@ docker: false
 
 auth:
   jwtTTL: 15m
-  refreshTTL: 1m
+  refreshTTL: 720h # 30 days
 
   maxDevidesSigned: 5 # if user will be signed in more than from {maxDevidesSigned} devices all previous refresh sessions will be cleared and leave only the new one 
 
