@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"github.com/zardan4/petition-rest/internal/core"
 )
 
@@ -39,12 +40,14 @@ func (h *Handler) signUp(c *gin.Context) {
 }
 
 type singInInput struct {
-	Name     string `json:"name" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Name        string `json:"name" binding:"required"`
+	Password    string `json:"password" binding:"required"`
+	Fingerprint string `json:"fingerprint" binding:"required"`
 }
 
 type signInResponse struct {
-	Token string `json:"token"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 // @Summary SignIn
@@ -53,7 +56,7 @@ type signInResponse struct {
 // @ID signin
 // @Accept  json
 // @Produce  json
-// @Param input body singInInput true "Account info"
+// @Param input body singInInput true "Account info and fingerprint"
 // @Success 200 {object} signInResponse
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
@@ -67,13 +70,81 @@ func (h *Handler) signIn(c *gin.Context) {
 		return
 	}
 
-	token, err := h.services.Authorization.GenerateToken(input.Name, input.Password)
+	tokens, err := h.services.Authorization.GenerateTokens(input.Name, input.Password, input.Fingerprint)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
+	c.SetCookie(
+		"refresh_token",
+		tokens.RefreshToken,
+		int(tokens.RefreshTokenTTL.Seconds()),
+		"/auth",
+		viper.GetString("serverDomain"),
+		true,
+		true,
+	)
+
 	c.JSON(http.StatusOK, signInResponse{
-		Token: token,
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
+	})
+}
+
+type refreshTokensInput struct {
+	Fingerprint string `json:"fingerprint" binding:"required"`
+}
+
+type refreshTokensResponse struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+}
+
+// @Summary Refresh tokens
+// @Tags auth
+// @Description Refresh pair of tokens
+// @ID refresh
+// @Accept  json
+// @Produce  json
+// @Param input body refreshTokensInput true "Fingerprint"
+// @Success 200 {object} refreshTokensResponse
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /auth/refresh [post]
+func (h *Handler) refreshTokens(c *gin.Context) {
+	var input refreshTokensInput
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	refreshToken, err := c.Cookie("refresh_token")
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "no refresh token cookie provided")
+		return
+	}
+
+	tokens, err := h.services.Authorization.RefreshTokens(refreshToken, input.Fingerprint)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.SetCookie(
+		"refresh_token",
+		tokens.RefreshToken,
+		int(tokens.RefreshTokenTTL.Seconds()),
+		"/auth",
+		viper.GetString("serverDomain"),
+		true,
+		true,
+	)
+
+	c.JSON(http.StatusOK, refreshTokensResponse{
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
 	})
 }

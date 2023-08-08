@@ -1,3 +1,5 @@
+DROP TABLE refresh_sessions;
+
 DROP TABLE petitions_items;
 DROP TABLE users_lists;
 

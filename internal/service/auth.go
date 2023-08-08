@@ -6,7 +6,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	petitions "github.com/zardan4/petition-rest/internal/core"
+	"github.com/spf13/viper"
+	"github.com/zardan4/petition-rest/internal/core"
 	repository "github.com/zardan4/petition-rest/internal/storage/psql"
 	"github.com/zardan4/petition-rest/pkg/hashing"
 )
@@ -28,19 +29,17 @@ func NewAuthorizationService(repo *repository.Repository, hasher *hashing.SHA256
 	}
 }
 
-func (a *AuthorizationService) CreateUser(user petitions.User) (int, error) {
+func (a *AuthorizationService) CreateUser(user core.User) (int, error) {
 	hashedPassword := a.hasher.Hash(user.Password)
 	user.Password = hashedPassword
 
 	return a.repo.CreateUser(user)
 }
 
-func (a *AuthorizationService) GenerateToken(name, password string) (string, error) {
-	hashedPassword := a.hasher.Hash(password)
-
-	user, err := a.repo.GetUserByName(name, hashedPassword)
+func (a *AuthorizationService) GenerateTokensById(userid int, fingerprint string) (core.JWTPair, error) {
+	user, err := a.repo.GetUserByIdWithoutPassword(userid)
 	if err != nil {
-		return "", err
+		return core.JWTPair{}, nil
 	}
 
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -50,7 +49,47 @@ func (a *AuthorizationService) GenerateToken(name, password string) (string, err
 	claims["iat"] = time.Now().Unix()
 	claims["user_id"] = user.Id
 
-	return token.SignedString(a.HMACSecret)
+	accessToken, err := token.SignedString(a.HMACSecret)
+	if err != nil {
+		return core.JWTPair{}, err
+	}
+
+	// refresh token
+	countOfRefreshSessions, err := a.repo.Authorization.CountAllRefreshSessionsByUserid(user.Id)
+	if err != nil {
+		return core.JWTPair{}, err
+	}
+
+	// if more refresh sessions than is allowed
+	if countOfRefreshSessions >= viper.GetInt("auth.maxDevidesSigned") {
+		// delete all previous sessions
+		a.repo.Authorization.DeleteAllRefreshSessionsByUserId(user.Id)
+	}
+
+	refreshTokenTTL := viper.GetDuration("auth.refreshTTL")
+	refreshToken, err := a.repo.CreateRefreshSession(user.Id, fingerprint, refreshTokenTTL)
+	if err != nil {
+		return core.JWTPair{}, err
+	}
+
+	return core.JWTPair{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+
+		RefreshTokenTTL: refreshTokenTTL,
+	}, nil
+}
+
+func (a *AuthorizationService) GenerateTokens(name, password, fingerprint string) (core.JWTPair, error) {
+	// access token
+	hashedPassword := a.hasher.Hash(password)
+
+	user, err := a.repo.GetUserByName(name, hashedPassword)
+	if err != nil {
+		return core.JWTPair{}, err
+	}
+
+	return a.GenerateTokensById(user.Id, fingerprint)
 }
 
 func (a *AuthorizationService) ParseToken(token string) (int, error) {
@@ -72,6 +111,15 @@ func (a *AuthorizationService) ParseToken(token string) (int, error) {
 	userId := claims["user_id"].(float64)
 
 	return int(userId), nil
+}
+
+func (a *AuthorizationService) RefreshTokens(refreshToken, fingerprint string) (core.JWTPair, error) {
+	user, err := a.repo.Authorization.RefreshTokensAndReturnUser(refreshToken, fingerprint)
+	if err != nil {
+		return core.JWTPair{}, err
+	}
+
+	return a.GenerateTokensById(user.Id, fingerprint)
 }
 
 func (a *AuthorizationService) CheckUserExistsById(id int) bool {

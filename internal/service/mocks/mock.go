@@ -63,19 +63,34 @@ func (mr *MockAuthorizationMockRecorder) CreateUser(user interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockAuthorization)(nil).CreateUser), user)
 }
 
-// GenerateToken mocks base method.
-func (m *MockAuthorization) GenerateToken(name, password string) (string, error) {
+// GenerateTokens mocks base method.
+func (m *MockAuthorization) GenerateTokens(name, password, fingerprint string) (core.JWTPair, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GenerateToken", name, password)
-	ret0, _ := ret[0].(string)
+	ret := m.ctrl.Call(m, "GenerateTokens", name, password, fingerprint)
+	ret0, _ := ret[0].(core.JWTPair)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GenerateToken indicates an expected call of GenerateToken.
-func (mr *MockAuthorizationMockRecorder) GenerateToken(name, password interface{}) *gomock.Call {
+// GenerateTokens indicates an expected call of GenerateTokens.
+func (mr *MockAuthorizationMockRecorder) GenerateTokens(name, password, fingerprint interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateToken", reflect.TypeOf((*MockAuthorization)(nil).GenerateToken), name, password)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateTokens", reflect.TypeOf((*MockAuthorization)(nil).GenerateTokens), name, password, fingerprint)
+}
+
+// GenerateTokensById mocks base method.
+func (m *MockAuthorization) GenerateTokensById(userid int, fingerprint string) (core.JWTPair, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GenerateTokensById", userid, fingerprint)
+	ret0, _ := ret[0].(core.JWTPair)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GenerateTokensById indicates an expected call of GenerateTokensById.
+func (mr *MockAuthorizationMockRecorder) GenerateTokensById(userid, fingerprint interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateTokensById", reflect.TypeOf((*MockAuthorization)(nil).GenerateTokensById), userid, fingerprint)
 }
 
 // ParseToken mocks base method.
@@ -91,6 +106,21 @@ func (m *MockAuthorization) ParseToken(token string) (int, error) {
 func (mr *MockAuthorizationMockRecorder) ParseToken(token interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseToken", reflect.TypeOf((*MockAuthorization)(nil).ParseToken), token)
+}
+
+// RefreshTokens mocks base method.
+func (m *MockAuthorization) RefreshTokens(refreshToken, fingerprint string) (core.JWTPair, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RefreshTokens", refreshToken, fingerprint)
+	ret0, _ := ret[0].(core.JWTPair)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RefreshTokens indicates an expected call of RefreshTokens.
+func (mr *MockAuthorizationMockRecorder) RefreshTokens(refreshToken, fingerprint interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshTokens", reflect.TypeOf((*MockAuthorization)(nil).RefreshTokens), refreshToken, fingerprint)
 }
 
 // MockPetition is a mock of Petition interface.

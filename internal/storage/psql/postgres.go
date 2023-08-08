@@ -7,11 +7,12 @@ import (
 )
 
 const (
-	usersTable          = "users"
-	petitionsTable      = "petitions_lists"
-	subsTable           = "subs_items"
-	usersPetitionsTable = "users_lists"
-	petitionsSubsTable  = "petitions_items"
+	usersTable           = "users"
+	petitionsTable       = "petitions_lists"
+	subsTable            = "subs_items"
+	usersPetitionsTable  = "users_lists"
+	petitionsSubsTable   = "petitions_items"
+	refreshSessionsTable = "refresh_sessions"
 )
 
 type PostgresConfig struct {

@@ -3,7 +3,7 @@ package service
 import (
 	"time"
 
-	petitions "github.com/zardan4/petition-rest/internal/core"
+	"github.com/zardan4/petition-rest/internal/core"
 	repository "github.com/zardan4/petition-rest/internal/storage/psql"
 	"github.com/zardan4/petition-rest/pkg/hashing"
 )
@@ -11,22 +11,24 @@ import (
 //go:generate mockgen -source=service.go -destination=mocks/mock.go
 
 type Authorization interface {
-	CreateUser(user petitions.User) (int, error)
-	GenerateToken(name, password string) (string, error)
+	CreateUser(user core.User) (int, error)
+	GenerateTokens(name, password, fingerprint string) (core.JWTPair, error)
+	GenerateTokensById(userid int, fingerprint string) (core.JWTPair, error)
 	ParseToken(token string) (int, error)
 	CheckUserExistsById(id int) bool
+	RefreshTokens(refreshToken, fingerprint string) (core.JWTPair, error)
 }
 
 type Petition interface {
 	CreatePetition(title, text string, authorId int) (int, error)
-	GetAllPetitions() ([]petitions.Petition, error)
-	GetPetition(petitionId int) (petitions.Petition, error)
+	GetAllPetitions() ([]core.Petition, error)
+	GetPetition(petitionId int) (core.Petition, error)
 	DeletePetition(petitionId, userId int) error
-	UpdatePetition(updatedPetition petitions.UpdatePetitionInput, petitionId, userId int) error
+	UpdatePetition(updatedPetition core.UpdatePetitionInput, petitionId, userId int) error
 }
 
 type Subs interface {
-	GetAllSubs(petitionId int) ([]petitions.Sub, error)
+	GetAllSubs(petitionId int) ([]core.Sub, error)
 	CreateSub(petitionId, userId int) (int, error)
 	DeleteSub(petitionId, userId int) error
 	CheckSignature(petitionId, userId int) (bool, error)

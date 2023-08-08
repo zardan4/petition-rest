@@ -1,5 +1,10 @@
 mode: "debug"
-docker: true
+docker: false
 
 auth:
-  jwtTTL: 12h
+  jwtTTL: 15m
+  refreshTTL: 1m
+
+  maxDevidesSigned: 5 # if user will be signed in more than from {maxDevidesSigned} devices all previous refresh sessions will be cleared and leave only the new one 
+
+serverDomain: localhost
