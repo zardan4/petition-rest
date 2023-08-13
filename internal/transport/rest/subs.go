@@ -70,7 +70,7 @@ func (h *Handler) createSub(ctx *gin.Context) {
 		return
 	}
 
-	createdSubId, err := h.services.Subs.CreateSub(petitionId, userId)
+	createdSubId, err := h.services.Subs.CreateSub(ctx, petitionId, userId)
 	if err != nil {
 		// check if user already voted
 		pqErr, ok := err.(*pq.Error)
@@ -120,7 +120,7 @@ func (h *Handler) deleteSub(ctx *gin.Context) {
 		return
 	}
 
-	err = h.services.DeleteSub(petitionId, userId)
+	err = h.services.DeleteSub(ctx, petitionId, userId)
 	if err != nil {
 		newErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return

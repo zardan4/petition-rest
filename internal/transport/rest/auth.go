@@ -32,7 +32,7 @@ func (h *Handler) signUp(c *gin.Context) {
 		return
 	}
 
-	id, err := h.services.Authorization.CreateUser(input)
+	id, err := h.services.Authorization.CreateUser(c, input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -74,7 +74,7 @@ func (h *Handler) signIn(c *gin.Context) {
 		return
 	}
 
-	tokens, err := h.services.Authorization.GenerateTokens(input.Name, input.Password, input.Fingerprint)
+	tokens, err := h.services.Authorization.GenerateTokens(c, input.Name, input.Password, input.Fingerprint)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -176,7 +176,7 @@ func (h *Handler) logOut(c *gin.Context) {
 		return
 	}
 
-	err = h.services.Authorization.Logout(refreshToken)
+	err = h.services.Authorization.Logout(c, refreshToken)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return

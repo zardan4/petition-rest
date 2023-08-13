@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	petitions "github.com/zardan4/petition-rest/internal/core"
 	"github.com/zardan4/petition-rest/internal/service"
 	repository "github.com/zardan4/petition-rest/internal/storage/psql"
+	grpc_client "github.com/zardan4/petition-rest/internal/transport/grpc"
 	handlers "github.com/zardan4/petition-rest/internal/transport/rest"
 	"github.com/zardan4/petition-rest/pkg/hashing"
 
@@ -86,8 +88,14 @@ func main() {
 
 	hasher := hashing.NewSHA256Hasher(os.Getenv("HASHER_SALT"))
 
+	auditClientPort, _ := strconv.Atoi(os.Getenv("AUDIT_PORT"))
+	auditClient, err := grpc_client.NewClient(auditClientPort)
+	if err != nil {
+		logrus.Fatal("error creating grpc audit client: ", err)
+	}
+
 	repo := repository.NewRepository(db)
-	services := service.NewService(repo, hasher, []byte(os.Getenv("JWT_SIGNING_KEY")), viper.GetDuration("auth.jwtTTL"))
+	services := service.NewService(repo, hasher, []byte(os.Getenv("JWT_SIGNING_KEY")), viper.GetDuration("auth.jwtTTL"), auditClient)
 	handlers := handlers.NewHandler(services)
 
 	srv := new(petitions.Server)

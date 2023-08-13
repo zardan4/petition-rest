@@ -42,16 +42,19 @@ func (a *AuthorizationPostgres) DeleteAllRefreshSessionsByUserId(userid int) err
 	return err
 }
 
-func (a *AuthorizationPostgres) DeleteRefreshSession(refreshToken string) error {
-	query := fmt.Sprintf("DELETE FROM %s WHERE refresh_token=$1", refreshSessionsTable)
+func (a *AuthorizationPostgres) DeleteRefreshSession(refreshToken string) (int, error) {
+	query := fmt.Sprintf("DELETE FROM %s WHERE refresh_token=$1 RETURNING user_id", refreshSessionsTable)
 
-	res, err := a.db.Exec(query, refreshToken)
+	row := a.db.QueryRow(query, refreshToken)
 
-	if affected, _ := res.RowsAffected(); affected == 0 {
-		return NoRowsAffectedError
+	if row == nil {
+		return 0, NoRowsAffectedError
 	}
 
-	return err
+	var userId int
+	err := row.Scan(&userId)
+
+	return userId, err
 }
 
 func (a *AuthorizationPostgres) RefreshTokensAndReturnUser(refreshToken, fingerprint string) (core.User, error) {

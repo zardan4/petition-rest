@@ -1,12 +1,15 @@
 package service
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/zardan4/petition-audit-grpc/pkg/core/audit"
 	"github.com/zardan4/petition-rest/internal/core"
 	repository "github.com/zardan4/petition-rest/internal/storage/psql"
 	"github.com/zardan4/petition-rest/pkg/hashing"
@@ -16,24 +19,41 @@ type AuthorizationService struct {
 	repo   *repository.Repository
 	hasher *hashing.SHA256Hasher
 
-	HMACSecret []byte
-	tokenTTL   time.Duration
+	HMACSecret  []byte
+	tokenTTL    time.Duration
+	auditClient AuditClient
 }
 
-func NewAuthorizationService(repo *repository.Repository, hasher *hashing.SHA256Hasher, signingKey []byte, tokenTTL time.Duration) *AuthorizationService {
+func NewAuthorizationService(repo *repository.Repository, hasher *hashing.SHA256Hasher, signingKey []byte, tokenTTL time.Duration, auditClient AuditClient) *AuthorizationService {
 	return &AuthorizationService{
-		repo:       repo,
-		hasher:     hasher,
-		HMACSecret: signingKey,
-		tokenTTL:   tokenTTL,
+		repo:        repo,
+		hasher:      hasher,
+		HMACSecret:  signingKey,
+		tokenTTL:    tokenTTL,
+		auditClient: auditClient,
 	}
 }
 
-func (a *AuthorizationService) CreateUser(user core.User) (int, error) {
+func (a *AuthorizationService) CreateUser(ctx context.Context, user core.User) (int, error) {
 	hashedPassword := a.hasher.Hash(user.Password)
 	user.Password = hashedPassword
 
-	return a.repo.CreateUser(user)
+	userId, err := a.repo.CreateUser(user)
+	if err != nil {
+		return -1, err
+	}
+
+	err = a.auditClient.SendLogRequest(ctx, audit.LogItem{
+		Action:    audit.ACTION_REGISTER,
+		Entity:    audit.ENTITY_USER,
+		EntityID:  int64(userId),
+		Timestamp: time.Now(),
+	})
+	if err != nil {
+		logrus.Fatalf("failed to log user registration: %s", err.Error())
+	}
+
+	return userId, nil
 }
 
 func (a *AuthorizationService) GenerateTokensById(userid int, fingerprint string) (core.JWTPair, error) {
@@ -83,7 +103,7 @@ func (a *AuthorizationService) GenerateTokensById(userid int, fingerprint string
 	}, nil
 }
 
-func (a *AuthorizationService) GenerateTokens(name, password, fingerprint string) (core.JWTPair, error) {
+func (a *AuthorizationService) GenerateTokens(ctx context.Context, name, password, fingerprint string) (core.JWTPair, error) {
 	// access token
 	hashedPassword := a.hasher.Hash(password)
 
@@ -92,7 +112,22 @@ func (a *AuthorizationService) GenerateTokens(name, password, fingerprint string
 		return core.JWTPair{}, err
 	}
 
-	return a.GenerateTokensById(user.Id, fingerprint)
+	tokens, err := a.GenerateTokensById(user.Id, fingerprint)
+	if err != nil {
+		return core.JWTPair{}, err
+	}
+
+	a.auditClient.SendLogRequest(ctx, audit.LogItem{
+		Action:    audit.ACTION_LOGIN,
+		Entity:    audit.ENTITY_USER,
+		EntityID:  int64(user.Id),
+		Timestamp: time.Now(),
+	})
+	if err != nil {
+		logrus.Fatalf("failed to log user login: %s", err.Error())
+	}
+
+	return tokens, nil
 }
 
 func (a *AuthorizationService) ParseToken(token string) (int, error) {
@@ -131,6 +166,20 @@ func (a *AuthorizationService) CheckUserExistsById(id int) bool {
 	return err != sql.ErrNoRows
 }
 
-func (a *AuthorizationService) Logout(refreshToken string) error {
-	return a.repo.DeleteRefreshSession(refreshToken)
+func (a *AuthorizationService) Logout(ctx context.Context, refreshToken string) error {
+	userId, err := a.repo.DeleteRefreshSession(refreshToken)
+	if err != nil {
+		return err
+	}
+
+	err = a.auditClient.SendLogRequest(ctx, audit.LogItem{
+		Action:    audit.ACTION_LOGOUT,
+		Entity:    audit.ENTITY_USER,
+		EntityID:  int64(userId),
+		Timestamp: time.Now(),
+	})
+	if err != nil {
+		logrus.Fatalf("failed to log user logout: %s", err.Error())
+	}
+	return nil
 }

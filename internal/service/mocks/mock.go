@@ -5,11 +5,50 @@
 package mock_service
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	audit "github.com/zardan4/petition-audit-grpc/pkg/core/audit"
 	core "github.com/zardan4/petition-rest/internal/core"
 )
+
+// MockAuditClient is a mock of AuditClient interface.
+type MockAuditClient struct {
+	ctrl     *gomock.Controller
+	recorder *MockAuditClientMockRecorder
+}
+
+// MockAuditClientMockRecorder is the mock recorder for MockAuditClient.
+type MockAuditClientMockRecorder struct {
+	mock *MockAuditClient
+}
+
+// NewMockAuditClient creates a new mock instance.
+func NewMockAuditClient(ctrl *gomock.Controller) *MockAuditClient {
+	mock := &MockAuditClient{ctrl: ctrl}
+	mock.recorder = &MockAuditClientMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockAuditClient) EXPECT() *MockAuditClientMockRecorder {
+	return m.recorder
+}
+
+// SendLogRequest mocks base method.
+func (m *MockAuditClient) SendLogRequest(ctx context.Context, req audit.LogItem) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SendLogRequest", ctx, req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SendLogRequest indicates an expected call of SendLogRequest.
+func (mr *MockAuditClientMockRecorder) SendLogRequest(ctx, req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendLogRequest", reflect.TypeOf((*MockAuditClient)(nil).SendLogRequest), ctx, req)
+}
 
 // MockAuthorization is a mock of Authorization interface.
 type MockAuthorization struct {
@@ -49,33 +88,33 @@ func (mr *MockAuthorizationMockRecorder) CheckUserExistsById(id interface{}) *go
 }
 
 // CreateUser mocks base method.
-func (m *MockAuthorization) CreateUser(user core.User) (int, error) {
+func (m *MockAuthorization) CreateUser(ctx context.Context, user core.User) (int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateUser", user)
+	ret := m.ctrl.Call(m, "CreateUser", ctx, user)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CreateUser indicates an expected call of CreateUser.
-func (mr *MockAuthorizationMockRecorder) CreateUser(user interface{}) *gomock.Call {
+func (mr *MockAuthorizationMockRecorder) CreateUser(ctx, user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockAuthorization)(nil).CreateUser), user)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockAuthorization)(nil).CreateUser), ctx, user)
 }
 
 // GenerateTokens mocks base method.
-func (m *MockAuthorization) GenerateTokens(name, password, fingerprint string) (core.JWTPair, error) {
+func (m *MockAuthorization) GenerateTokens(ctx context.Context, name, password, fingerprint string) (core.JWTPair, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GenerateTokens", name, password, fingerprint)
+	ret := m.ctrl.Call(m, "GenerateTokens", ctx, name, password, fingerprint)
 	ret0, _ := ret[0].(core.JWTPair)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GenerateTokens indicates an expected call of GenerateTokens.
-func (mr *MockAuthorizationMockRecorder) GenerateTokens(name, password, fingerprint interface{}) *gomock.Call {
+func (mr *MockAuthorizationMockRecorder) GenerateTokens(ctx, name, password, fingerprint interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateTokens", reflect.TypeOf((*MockAuthorization)(nil).GenerateTokens), name, password, fingerprint)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateTokens", reflect.TypeOf((*MockAuthorization)(nil).GenerateTokens), ctx, name, password, fingerprint)
 }
 
 // GenerateTokensById mocks base method.
@@ -94,17 +133,17 @@ func (mr *MockAuthorizationMockRecorder) GenerateTokensById(userid, fingerprint 
 }
 
 // Logout mocks base method.
-func (m *MockAuthorization) Logout(refreshToken string) error {
+func (m *MockAuthorization) Logout(ctx context.Context, refreshToken string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Logout", refreshToken)
+	ret := m.ctrl.Call(m, "Logout", ctx, refreshToken)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Logout indicates an expected call of Logout.
-func (mr *MockAuthorizationMockRecorder) Logout(refreshToken interface{}) *gomock.Call {
+func (mr *MockAuthorizationMockRecorder) Logout(ctx, refreshToken interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Logout", reflect.TypeOf((*MockAuthorization)(nil).Logout), refreshToken)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Logout", reflect.TypeOf((*MockAuthorization)(nil).Logout), ctx, refreshToken)
 }
 
 // ParseToken mocks base method.

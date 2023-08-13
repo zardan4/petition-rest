@@ -16,7 +16,7 @@ type Authorization interface {
 	CreateRefreshSession(userid int, fingerprint string, sessionTimeHours time.Duration) (string, error)
 	CountAllRefreshSessionsByUserid(userid int) (int, error)
 	DeleteAllRefreshSessionsByUserId(userid int) error
-	DeleteRefreshSession(refreshToken string) error
+	DeleteRefreshSession(refreshToken string) (int, error)
 	RefreshTokensAndReturnUser(refreshToken, fingerprint string) (core.User, error)
 }
 

@@ -57,7 +57,7 @@ func (h *Handler) getPetition(ctx *gin.Context) {
 		return
 	}
 
-	petition, err := h.services.Petition.GetPetition(petitionId)
+	petition, err := h.services.Petition.GetPetition(ctx, petitionId)
 	if err != nil {
 		newErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
@@ -98,7 +98,7 @@ func (h *Handler) createPetition(ctx *gin.Context) {
 		return
 	}
 
-	id, err := h.services.Petition.CreatePetition(input.Title, input.Text, userId)
+	id, err := h.services.Petition.CreatePetition(ctx, input.Title, input.Text, userId)
 	if err != nil {
 		newErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
@@ -135,7 +135,7 @@ func (h *Handler) deletePetition(ctx *gin.Context) {
 		return
 	}
 
-	err = h.services.Petition.DeletePetition(petitionId, userId)
+	err = h.services.Petition.DeletePetition(ctx, petitionId, userId)
 	if err != nil {
 		newErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
@@ -180,7 +180,7 @@ func (h *Handler) updatePetition(ctx *gin.Context) {
 		return
 	}
 
-	err = h.services.Petition.UpdatePetition(input, petitionId, userId)
+	err = h.services.Petition.UpdatePetition(ctx, input, petitionId, userId)
 	if err != nil {
 		newErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
