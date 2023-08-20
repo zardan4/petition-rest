@@ -7,6 +7,8 @@
 
 # REST for petitions
 Handles requests for petitions, users and signatures. Can be used for writing small petitions interfaces
+For audit module use: https://github.com/zardan4/petition-audit-grpc
+
 ## Enpoints. Requests/Responses
 <details>
 <summary>
