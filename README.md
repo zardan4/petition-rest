@@ -6,8 +6,8 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/zardan4/petition-rest.svg)](https://pkg.go.dev/github.com/zardan4/petition-rest)
 
 # REST for petitions
-Handles requests for petitions, users and signatures. Can be used for writing small petitions interfaces
-!!!For audit use: github.com/zardan4/petition-audit-rabbitmq
+Handles requests for petitions, users and signatures. Can be used for writing small petitions interfaces<br>
+For this petitions branch use audit module: https://github.com/zardan4/petition-audit-rabbitmq
 ## Enpoints. Requests/Responses
 <details>
 <summary>
