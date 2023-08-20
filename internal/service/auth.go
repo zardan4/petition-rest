@@ -117,7 +117,7 @@ func (a *AuthorizationService) GenerateTokens(ctx context.Context, name, passwor
 		return core.JWTPair{}, err
 	}
 
-	a.auditClient.SendLogRequest(ctx, audit.LogItem{
+	err = a.auditClient.SendLogRequest(ctx, audit.LogItem{
 		Action:    audit.ACTION_LOGIN,
 		Entity:    audit.ENTITY_USER,
 		EntityID:  int64(user.Id),
