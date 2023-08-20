@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 	"time"
 
@@ -14,7 +13,7 @@ import (
 	petitions "github.com/zardan4/petition-rest/internal/core"
 	"github.com/zardan4/petition-rest/internal/service"
 	repository "github.com/zardan4/petition-rest/internal/storage/psql"
-	grpc_client "github.com/zardan4/petition-rest/internal/transport/grpc"
+	mq_client "github.com/zardan4/petition-rest/internal/transport/mq"
 	handlers "github.com/zardan4/petition-rest/internal/transport/rest"
 	"github.com/zardan4/petition-rest/pkg/hashing"
 
@@ -88,8 +87,7 @@ func main() {
 
 	hasher := hashing.NewSHA256Hasher(os.Getenv("HASHER_SALT"))
 
-	auditClientPort, _ := strconv.Atoi(os.Getenv("AUDIT_PORT"))
-	auditClient, err := grpc_client.NewClient(auditClientPort)
+	auditClient, err := mq_client.NewClient(os.Getenv("RABBITMQ_USER"), os.Getenv("RABBITMQ_PASSWORD"))
 	if err != nil {
 		logrus.Fatal("error creating grpc audit client: ", err)
 	}

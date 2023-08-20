@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/zardan4/petition-audit-grpc/pkg/core/audit"
+	"github.com/zardan4/petition-audit-rabbitmq/pkg/core/audit"
 	petitions "github.com/zardan4/petition-rest/internal/core"
 	repository "github.com/zardan4/petition-rest/internal/storage/psql"
 )

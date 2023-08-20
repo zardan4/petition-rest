@@ -9,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/zardan4/petition-audit-grpc/pkg/core/audit"
+	"github.com/zardan4/petition-audit-rabbitmq/pkg/core/audit"
 	"github.com/zardan4/petition-rest/internal/core"
 	repository "github.com/zardan4/petition-rest/internal/storage/psql"
 	"github.com/zardan4/petition-rest/pkg/hashing"

@@ -8,3 +8,6 @@ auth:
   maxDevidesSigned: 5 # if user will be signed in more than from {maxDevidesSigned} devices all previous refresh sessions will be cleared and leave only the new one 
 
 serverDomain: localhost
+
+queues:
+  logs: log-mq
